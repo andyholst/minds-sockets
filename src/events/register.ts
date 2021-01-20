@@ -15,6 +15,7 @@ export class Register {
   }
 
   listen(){
+    const cert = readFileSync('../../oauth-pub.key');
 
     this.socket.on('register', (guid, access_token) => {
 
@@ -24,7 +25,6 @@ export class Register {
           return;
       }
 
-      const cert = readFileSync('../../oauth-pub.key');
       jwt.verify(access_token, cert, (err, decoded) => {
 
         if(err){
