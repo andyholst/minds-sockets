@@ -9,6 +9,7 @@ import { readFileSync  } from 'fs';
 export class Register {
 
   private redis = Di.get('data/redis');
+  private cert = readFileSync('../../oauth-pub.key');
 
   constructor(private socket, private io){
     this.listen();
@@ -25,7 +26,7 @@ export class Register {
       }
 
       const cert = readFileSync('../../oauth-pub.key');
-      jwt.verify(access_token, cert, (err, decoded) => {
+      jwt.verify(access_token, this.cert, (err, decoded) => {
 
         if(err){
           console.log('[jwt]: token not found');
