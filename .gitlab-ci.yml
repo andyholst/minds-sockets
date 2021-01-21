@@ -1,0 +1,33 @@
+image: minds/ci-front:latest
+
+stages:
+  - build
+  - prepare
+
+build:
+  stage: build
+  script:
+    - npm ci
+    - npm run build
+  artifacts:
+    name: '$CI_COMMIT_REF_SLUG'
+    paths:
+      - build
+
+#################
+# Prepare Stage #
+#################
+
+prepare:
+  stage: prepare
+  image: minds/ci:latest
+  services:
+    - docker:dind
+  script:
+    - docker login -u gitlab-ci-token -p ${CI_BUILD_TOKEN} ${CI_REGISTRY}
+    - docker build -t $CI_REGISTRY_IMAGE/sockets:$CI_PIPELINE_ID -f containers/sockets/Dockerfile .
+    - docker push $CI_REGISTRY_IMAGE/sockets:$CI_PIPELINE_ID
+    - docker tag $CI_REGISTRY_IMAGE/sockets:$CI_PIPELINE_ID $CI_REGISTRY_IMAGE/sockets:latest
+    - docker push $CI_REGISTRY_IMAGE/sockets:latest
+  dependencies:
+    - build
