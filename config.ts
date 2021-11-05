@@ -18,7 +18,7 @@ export const CASSANDRA = {
   SERVERS: argv['CASSANDRA-SERVERS'] ? [ argv['CASSANDRA-SERVERS'] ] : [ '127.0.0.1' ],
   KEYSPACE: argv['CASSANDRA-KEYSPACE'] || 'minds',
   USERNAME: argv['CASSANDRA-USERNAME'] || 'cassandra',
-  PASSWORD: argv['CASSANDRA-PASSWORD'] || 'cassandra',
+  PASSWORD: process.env.CASSANDRA_PASSWORD || 'cassandra',
 };
 
 export const JWT_SECRET = argv['JWT-SECRET'];
