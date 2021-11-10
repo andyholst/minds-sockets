@@ -4,7 +4,7 @@
 
 import * as express from 'express';
 import * as http from 'http';
-import * as socketio from 'socket.io';
+import { Server } from 'socket.io';
 import * as cookie from 'cookie';
 import * as jwt from 'jsonwebtoken';
 
@@ -19,7 +19,14 @@ export class IO {
 
   app = express();
   server = this.app.listen(config.PORT);
-  io = socketio.listen(this.server, { pingTimeout: 30000 });
+  io = new Server(this.server, {
+    pingTimeout: 30000,
+    cors: {
+      origin: ["https://www.minds.com", "https://localhost.minds.com"],
+      //allowedHeaders: ["my-custom-header"],
+      credentials: true
+    }
+  });
 
   public constructor(){
     this.app.get('/', function (req, res){
@@ -33,7 +40,7 @@ export class IO {
         return next();
       }
 
-      let c : any = cookie.parse(socket.request.headers.cookie);
+      let c : any = cookie.parse(socket.request.headers.cookie.toString());
       let token = c['socket_jwt'] || c['socket_jwt_multi'];
       if(!token){
         //console.log('no jwt cookie found');

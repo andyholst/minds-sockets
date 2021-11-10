@@ -13,6 +13,7 @@ build:
     name: '$CI_COMMIT_REF_SLUG'
     paths:
       - build
+      - node_modules
 
 #################
 # Prepare Stage #
@@ -31,3 +32,4 @@ prepare:
     - docker push $CI_REGISTRY_IMAGE/sockets:latest
   dependencies:
     - build
+    - node_modules

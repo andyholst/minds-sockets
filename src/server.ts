@@ -1,5 +1,5 @@
-import * as _redis  from 'redis';
-import * as _ioRedis from 'socket.io-redis';
+import { createAdapter } from "@socket.io/redis-adapter";
+import { createClient } from "redis";
 
 import * as config from '../config';
 import { Register } from './events/register';
@@ -31,10 +31,10 @@ export class MindsSocketServer {
 
   initIOAdapter(){
     console.log('[init]: connecting to redis adapter');
-    this.io.adapter(_ioRedis({
-      pubClient: _redis.createClient(config.REDIS.PORT, config.REDIS.HOST),
-      subClient: _redis.createClient(config.REDIS.PORT, config.REDIS.HOST, { detect_buffers: true })
-    }));
+    this.io.adapter(createAdapter(
+      createClient({ host: config.REDIS.HOST, port: config.REDIS.PORT}),
+      createClient({ host: config.REDIS.HOST, port: config.REDIS.PORT, detect_buffers: true }),
+    ));
   }
 
   initBindings(){
@@ -47,7 +47,7 @@ export class MindsSocketServer {
     console.log('[listen]: Started listening on port %s', config.PORT);
     Online.clear();
     this.io.on('connection', (socket) => {
-      console.log('[connection]: received');
+      // console.log('[connection]: received');
 
       let register = new Register(socket, this.io);
       let message = new SendMessage(socket, this.io);

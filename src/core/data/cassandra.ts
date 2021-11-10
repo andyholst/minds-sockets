@@ -16,7 +16,8 @@ export class Cassandra {
       keyspace: config.CASSANDRA.KEYSPACE,
       credentials: { username: config.CASSANDRA.USERNAME, password: config.CASSANDRA.PASSWORD },
       localDataCenter: 'datacenter1', // TODO: make this a config value
-      queryOptions: { consistency: _cassandra.types.consistencies.localQuorum }
+      queryOptions: { consistency: _cassandra.types.consistencies.localQuorum },
+      authProvider: new _cassandra.auth.PlainTextAuthProvider(config.CASSANDRA.USERNAME, config.CASSANDRA.PASSWORD),
     });
   }
 
